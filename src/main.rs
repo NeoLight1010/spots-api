@@ -1,13 +1,7 @@
-use std::env;
-
-use diesel::prelude::*;
+use db::setup::{get_db_config, DBPool};
 use dotenv::dotenv;
-use rocket::figment::{
-    util::map,
-    value::{Map, Value},
-};
-use rocket_sync_db_pools::database;
-use routes::{hello_world, add_post};
+use rocket::figment::util::map;
+use routes::{add_post, hello_world};
 
 #[macro_use]
 extern crate rocket;
@@ -18,20 +12,13 @@ extern crate diesel;
 mod db;
 mod routes;
 
-#[database("spots")]
-pub struct DBPool(PgConnection);
-
 #[launch]
 fn rocket() -> _ {
     dotenv().ok();
 
-    let db_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set.");
+    let db_config = get_db_config();
 
-    let db: Map<_, Value> = map! {
-        "url"=> db_url.into(),
-    };
-
-    let figment = rocket::Config::figment().merge(("databases", map!["spots" => db]));
+    let figment = rocket::Config::figment().merge(("databases", map!["spots" => db_config]));
 
     rocket::custom(figment)
         .mount("/", routes![hello_world, add_post])
