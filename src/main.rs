@@ -47,7 +47,7 @@ async fn hello_world(db: DBPool) -> &'static str {
 
 #[get("/add")]
 async fn add_post(db: DBPool) -> &'static str {
-    let _: Post = db
+    db
         .run(|conn| {
             let new_post = NewPost {
                 title: "My post",
@@ -56,7 +56,7 @@ async fn add_post(db: DBPool) -> &'static str {
 
             diesel::insert_into(schema::posts::table)
                 .values(&new_post)
-                .get_result(conn)
+                .execute(conn)
                 .expect("Error saving new post.")
         })
         .await;
