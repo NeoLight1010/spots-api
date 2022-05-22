@@ -7,6 +7,7 @@ use rocket::figment::{
     value::{Map, Value},
 };
 use rocket_sync_db_pools::database;
+use routes::{hello_world, add_post};
 
 #[macro_use]
 extern crate rocket;
@@ -14,20 +15,11 @@ extern crate rocket;
 #[macro_use]
 extern crate diesel;
 
-pub mod db;
+mod db;
+mod routes;
 
 #[database("spots")]
 pub struct DBPool(PgConnection);
-
-#[get("/")]
-async fn hello_world(db: DBPool) -> &'static str {
-    "Hello World!"
-}
-
-#[get("/add")]
-async fn add_post(db: DBPool) -> &'static str {
-    "Added a new post!"
-}
 
 #[launch]
 fn rocket() -> _ {
