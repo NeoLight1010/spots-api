@@ -1,6 +1,6 @@
 use std::env;
 
-use db::{models::Post, schema::posts::dsl::*, setup::establish_connection};
+use db::{models::Post, schema::posts::dsl::*};
 use diesel::prelude::*;
 use dotenv::dotenv;
 use rocket::figment::{
@@ -17,14 +17,17 @@ extern crate diesel;
 
 pub mod db;
 
+#[database("spots")]
+pub struct DBPool(PgConnection);
+
 #[get("/")]
-async fn hello_world(conn: DBPool) -> &'static str {
-    let results = conn
-        .run(|c| {
+async fn hello_world(db: DBPool) -> &'static str {
+    let results = db
+        .run(|conn| {
             posts
                 .filter(published.eq(true))
                 .limit(5)
-                .load::<Post>(c)
+                .load::<Post>(conn)
                 .expect("Error loading posts.")
         })
         .await;
@@ -39,9 +42,6 @@ async fn hello_world(conn: DBPool) -> &'static str {
     "Hello World!"
 }
 
-#[database("spots")]
-pub struct DBPool(PgConnection);
-
 #[launch]
 fn rocket() -> _ {
     dotenv().ok();
@@ -50,7 +50,6 @@ fn rocket() -> _ {
 
     let db: Map<_, Value> = map! {
         "url"=> db_url.into(),
-        "pool_size" => 10.into(),
     };
 
     let figment = rocket::Config::figment().merge(("databases", map!["spots" => db]));
