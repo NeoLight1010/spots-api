@@ -1,6 +1,13 @@
+use std::env;
+
 use db::{models::Post, schema::posts::dsl::*, setup::establish_connection};
 use diesel::prelude::*;
 use dotenv::dotenv;
+use rocket::figment::{
+    util::map,
+    value::{Map, Value},
+};
+use rocket_sync_db_pools::database;
 
 #[macro_use]
 extern crate rocket;
@@ -11,21 +18,16 @@ extern crate diesel;
 pub mod db;
 
 #[get("/")]
-fn hello_world() -> &'static str {
-    "Hello World!"
-}
-
-#[launch]
-fn rocket() -> _ {
-    dotenv().ok();
-
-    let connection = establish_connection();
-
-    let results = posts
-        .filter(published.eq(true))
-        .limit(5)
-        .load::<Post>(&connection)
-        .expect("Error loading posts");
+async fn hello_world(conn: DBPool) -> &'static str {
+    let results = conn
+        .run(|c| {
+            posts
+                .filter(published.eq(true))
+                .limit(5)
+                .load::<Post>(c)
+                .expect("Error loading posts.")
+        })
+        .await;
 
     println!("Displaying {} posts:", results.len());
     for post in results {
@@ -34,5 +36,26 @@ fn rocket() -> _ {
         println!("{}", post.body);
     }
 
-    rocket::build().mount("/", routes![hello_world])
+    "Hello World!"
+}
+
+#[database("spots")]
+pub struct DBPool(PgConnection);
+
+#[launch]
+fn rocket() -> _ {
+    dotenv().ok();
+
+    let db_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set.");
+
+    let db: Map<_, Value> = map! {
+        "url"=> db_url.into(),
+        "pool_size" => 10.into(),
+    };
+
+    let figment = rocket::Config::figment().merge(("databases", map!["spots" => db]));
+
+    rocket::custom(figment)
+        .mount("/", routes![hello_world])
+        .attach(DBPool::fairing())
 }
