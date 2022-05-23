@@ -1211,6 +1211,7 @@ dependencies = [
  "dotenv",
  "rocket",
  "rocket_sync_db_pools",
+ "serde",
 ]
 
 [[package]]
