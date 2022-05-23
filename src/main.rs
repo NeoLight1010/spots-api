@@ -24,3 +24,14 @@ fn rocket() -> _ {
         .mount("/", routes![hello_world, add_post])
         .attach(DBPool::fairing())
 }
+
+#[cfg(test)]
+mod test {
+    use super::rocket;
+    use rocket::local::blocking::Client;
+
+    #[test]
+    fn rocket_instance() {
+        Client::tracked(rocket()).expect("Invalid rocket instance.");
+    }
+}
