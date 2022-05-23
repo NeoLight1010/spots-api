@@ -1,7 +1,7 @@
 use db::setup::{get_db_config, DBPool};
 use dotenv::dotenv;
 use rocket::figment::util::map;
-use routes::{add_post, hello_world};
+use routes::hello_world;
 
 #[macro_use]
 extern crate rocket;
@@ -21,7 +21,7 @@ fn rocket() -> _ {
     let figment = rocket::Config::figment().merge(("databases", map!["spots" => db_config]));
 
     rocket::custom(figment)
-        .mount("/", routes![hello_world, add_post])
+        .mount("/", routes![hello_world])
         .attach(DBPool::fairing())
 }
 
