@@ -1,7 +1,7 @@
 use db::setup::{get_db_config, DBPool};
 use dotenv::dotenv;
 use rocket::figment::util::map;
-use routes::index;
+use routes::{index, spot};
 
 #[macro_use]
 extern crate rocket;
@@ -22,6 +22,7 @@ fn rocket() -> _ {
 
     rocket::custom(figment)
         .mount("/", routes![index])
+        .mount("/spot", routes![spot::index])
         .attach(DBPool::fairing())
 }
 
