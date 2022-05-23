@@ -275,6 +275,7 @@ checksum = "9cbfd34cd233cc0f363875f1acd8e40e119d5c5e69eb99ffe9639f2596310b16"
 dependencies = [
  "byteorder",
  "diesel",
+ "serde",
 ]
 
 [[package]]
