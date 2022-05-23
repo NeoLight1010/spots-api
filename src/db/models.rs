@@ -1,13 +1,14 @@
 use diesel::Queryable;
 use diesel_geometry::data_types::PgPoint;
+use serde::Serialize;
 use super::schema::spots;
 
-#[derive(Queryable)]
+#[derive(Queryable, Serialize)]
 pub struct Spot {
     pub id: i32,
     pub title: String,
     pub description: String,
-    pub location: (f64, f64),
+    pub location: PgPoint,
 }
 
 #[derive(Insertable)]
