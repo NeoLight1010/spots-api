@@ -22,7 +22,7 @@ fn rocket() -> _ {
 
     rocket::custom(figment)
         .mount("/", routes![index])
-        .mount("/spot", routes![spot::index])
+        .mount("/spot", routes![spot::index, spot::create_spot])
         .attach(DBPool::fairing())
 }
 
