@@ -12,7 +12,7 @@ pub struct Spot {
     pub longitude: f64,
 }
 
-#[derive(Insertable)]
+#[derive(Insertable, Deserialize)]
 #[table_name = "spots"]
 pub struct NewSpot<'a> {
     pub title: &'a str,
