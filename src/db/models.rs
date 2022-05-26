@@ -14,7 +14,7 @@ pub struct Spot {
 
 #[derive(Insertable)]
 #[table_name = "spots"]
-pub struct NewPost<'a> {
+pub struct NewSpot<'a> {
     pub title: &'a str,
     pub description: &'a str,
 
