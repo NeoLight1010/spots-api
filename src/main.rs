@@ -13,7 +13,7 @@ mod db;
 mod routes;
 
 #[launch]
-fn rocket() -> _ {
+pub fn rocket() -> _ {
     dotenv().ok();
 
     let db_config = get_db_config();
