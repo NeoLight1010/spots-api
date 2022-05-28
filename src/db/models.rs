@@ -2,7 +2,7 @@ use super::schema::spots;
 use diesel::Queryable;
 use serde::{Deserialize, Serialize};
 
-#[derive(Queryable, Serialize, Deserialize)]
+#[derive(Queryable, Serialize)]
 pub struct Spot {
     pub id: i32,
     pub title: String,
