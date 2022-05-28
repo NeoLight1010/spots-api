@@ -1,6 +1,6 @@
 use db::setup::init_db_pool;
 use dotenv::dotenv;
-use routes::{index, spot};
+use routes::{index, spot, users};
 
 #[macro_use]
 extern crate rocket;
@@ -19,6 +19,7 @@ pub fn rocket() -> _ {
         .manage(init_db_pool())
         .mount("/", routes![index])
         .mount("/spot", routes![spot::index, spot::create_spot])
+        .mount("/users", routes![users::get_users])
 }
 
 #[cfg(test)]
