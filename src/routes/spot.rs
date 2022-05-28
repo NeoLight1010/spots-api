@@ -15,7 +15,7 @@ pub fn index(conn: DBConn) -> Json<Vec<Spot>> {
 }
 
 #[post("/", format = "json", data = "<data>")]
-pub async fn create_spot(conn: DBConn, data: Json<NewSpot>) -> Json<Spot> {
+pub fn create_spot(conn: DBConn, data: Json<NewSpot>) -> Json<Spot> {
     let new_spot = data.into_inner();
 
     let inserted: Spot = diesel::insert_into(spots)
