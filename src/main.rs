@@ -1,6 +1,5 @@
-use db::setup::{get_db_config, DBPool};
+use db::setup::init_db_pool;
 use dotenv::dotenv;
-use rocket::figment::util::map;
 use routes::{index, spot};
 
 #[macro_use]
@@ -16,14 +15,10 @@ mod routes;
 pub fn rocket() -> _ {
     dotenv().ok();
 
-    let db_config = get_db_config();
-
-    let figment = rocket::Config::figment().merge(("databases", map!["spots" => db_config]));
-
-    rocket::custom(figment)
+    rocket::build()
+        .manage(init_db_pool())
         .mount("/", routes![index])
         .mount("/spot", routes![spot::index, spot::create_spot])
-        .attach(DBPool::fairing())
 }
 
 #[cfg(test)]

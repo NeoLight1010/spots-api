@@ -5,11 +5,6 @@ edition = "2021"
 
 [dependencies]
 rocket = { version = "0.5.0-rc.2", features = ["json"] }
-diesel = { version = "1.4.4", features = ["postgres"] }
-diesel_geometry = { version = "1.4.0", features = ["serde"] }
+diesel = { version = "1.4.4", features = ["postgres", "r2d2"] }
 dotenv = "0.15.0"
 serde = "1.0.137"
-
-[dependencies.rocket_sync_db_pools]
-version = "0.1.0-rc.2"
-features = ["diesel_postgres_pool"]

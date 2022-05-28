@@ -1,18 +1,18 @@
 use std::env;
 
-use diesel::PgConnection;
-use rocket::figment::{value::{Value, Map}, util::map};
-use rocket_sync_db_pools::database;
+use diesel::{
+    r2d2::{self, ConnectionManager},
+    PgConnection,
+};
 
-#[database("spots")]
-pub struct DBPool(PgConnection);
+pub type DBPool = r2d2::Pool<ConnectionManager<PgConnection>>;
 
-pub fn get_db_config() -> Map<&'static str, Value> {
-    let db_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set.");
+pub fn init_db_pool() -> DBPool {
+    let manager = ConnectionManager::<PgConnection>::new(get_database_url());
 
-    let db: Map<_, Value> = map! {
-        "url"=> db_url.into(),
-    };
+    DBPool::new(manager).expect("Error creating DB pool.")
+}
 
-    return db;
+fn get_database_url() -> String {
+    env::var("DATABASE_URL").expect("DATABASE_URL must be set.")
 }
