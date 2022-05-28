@@ -1,4 +1,4 @@
-use super::schema::{spots, users};
+use crate::db::schema::spots;
 use diesel::{Queryable, Insertable};
 use serde::{Deserialize, Serialize};
 
@@ -20,25 +20,4 @@ pub struct NewSpot {
 
     pub latitude: f64,
     pub longitude: f64,
-}
-
-#[derive(Queryable)]
-pub struct User {
-    pub id: i32,
-
-    pub username: String,
-    pub password: String,
-}
-
-#[derive(Deserialize)]
-pub struct NewUserNotEncrypted {
-    pub username: String,
-    pub password: String,
-}
-
-#[derive(Insertable)]
-#[table_name = "users"]
-pub struct NewUserEncrypted {
-    pub username: String,
-    pub password: String,
 }
