@@ -8,3 +8,7 @@ pub fn encrypt_password(password: &str) -> String {
 
     encrypted
 }
+
+pub fn validate_password(raw_password: &str, hashed_password: &str) -> bool {
+    argon2::verify_encoded(hashed_password, raw_password.as_bytes()).unwrap_or(false)
+}

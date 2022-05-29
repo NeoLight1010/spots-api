@@ -1,5 +1,7 @@
 use crate::db::models::user::User;
 
+use super::utils::validate_password;
+
 pub enum LoginError {
     UsernameDoesNotExist,
     WrongPassword,
@@ -19,13 +21,9 @@ pub fn validate_login(optional_user: Option<User>, raw_password: &str) -> Result
     Ok(user)
 }
 
-fn validate_password(raw_password: &str, hashed_password: &str) -> bool {
-    argon2::verify_encoded(hashed_password, raw_password.as_bytes()).unwrap_or(false)
-}
-
 #[cfg(test)]
 mod test {
-    use crate::{db::models::user::User, auth::utils::encrypt_password};
+    use crate::{auth::utils::encrypt_password, db::models::user::User};
 
     use super::{validate_login, LoginError};
 
@@ -36,7 +34,7 @@ mod test {
 
         match error {
             LoginError::UsernameDoesNotExist => (),
-            _ => panic!("Incorrect error.")
+            _ => panic!("Incorrect error."),
         };
     }
 
@@ -56,7 +54,7 @@ mod test {
 
         match error {
             LoginError::WrongPassword => (),
-            _ => panic!("Incorrect error.")
+            _ => panic!("Incorrect error."),
         };
     }
 
