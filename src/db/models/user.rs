@@ -1,4 +1,4 @@
-use crate::db::schema::users;
+use crate::{db::schema::users, auth::utils::encrypt_password};
 
 use diesel::Queryable;
 use serde::{Deserialize, Serialize};
@@ -27,23 +27,12 @@ pub struct NewUserEncrypted {
 impl NewUserEncrypted {
     pub fn new(new_user_not_encrypted: &NewUserNotEncrypted) -> NewUserEncrypted {
         let hashed_password = 
-            Self::hash_password(new_user_not_encrypted.password.as_str());
+            encrypt_password(new_user_not_encrypted.password.as_str());
 
         NewUserEncrypted {
             username: new_user_not_encrypted.username.clone(),
             password: hashed_password,
         }
-    }
-
-    fn hash_password(password: &str) -> String {
-        let salt = b"random_salt";
-
-        let config = argon2::Config::default();
-
-        let hashed = argon2::hash_encoded(password.as_bytes(), salt, &config)
-            .expect("Error hashing password.");
-
-        return hashed;
     }
 }
 
