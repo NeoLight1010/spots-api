@@ -1,5 +1,5 @@
 use crate::{
-    auth::login::{validate_login, LoginData, LoginError},
+    auth::login::{validate_login, LoginError, LoginResult},
     db::{
         connection::DBConn,
         models::user::{NewUserEncrypted, NewUserNotEncrypted, User},
@@ -9,6 +9,13 @@ use crate::{
 use diesel::result::Error;
 use diesel::{prelude::*, result::DatabaseErrorKind::UniqueViolation};
 use rocket::{http::{CookieJar, Cookie}, serde::json::Json};
+use serde::Deserialize;
+
+#[derive(Deserialize)]
+pub struct LoginData {
+    username: String,
+    password: String,
+}
 
 #[get("/")]
 pub fn get_users(conn: DBConn) -> Result<Json<Vec<User>>, String> {
@@ -54,17 +61,28 @@ pub fn login(
 ) -> Result<Json<User>, String> {
     let login_data = login_data_json.into_inner();
 
-    let login_result = validate_login(&login_data, conn);
+    let user_result: Result<Option<User>, _> = users
+        .filter(username.eq(&login_data.username))
+        .limit(1)
+        .first(&*conn)
+        .optional();
 
-    if let Err(error) = login_result {
+    if let Err(error) = user_result {
+        return Err(error.to_string());
+    }
+
+    let optional_user = user_result.ok().unwrap();
+
+    let login_result = validate_login(optional_user.as_ref(), &login_data.password);
+
+    if let LoginResult::Failed(error) = login_result {
         return match error {
             LoginError::UsernameDoesNotExist => Err("Username does not exist.".into()),
             LoginError::WrongPassword => Err("Incorrect password.".into()),
-            LoginError::DBError(db_error) => Err(db_error.to_string()),
         };
     }
 
-    let user = login_result.ok().unwrap();
+    let user = optional_user.unwrap();
 
     let user_id_cookie = Cookie::new("user_id", user.id.to_string());
 

@@ -1,45 +1,27 @@
-use diesel::prelude::*;
-use diesel::result::Error;
-use rocket::serde::Deserialize;
+use crate::db::models::user::User;
 
-use crate::db::{connection::DBConn, models::user::User, schema::users::dsl::*};
-
-#[derive(Deserialize)]
-pub struct LoginData {
-    username: String,
-    password: String,
+pub enum LoginResult {
+    Successful,
+    Failed(LoginError),
 }
 
 pub enum LoginError {
     UsernameDoesNotExist,
     WrongPassword,
-    DBError(Error),
 }
 
-pub fn validate_login(login_data: &LoginData, conn: DBConn) -> Result<User, LoginError> {
-    let user_result: Result<Option<User>, _> = users
-        .filter(username.eq(&login_data.username))
-        .limit(1)
-        .first(&*conn)
-        .optional();
-
-    if let Err(error) = user_result {
-        return Err(LoginError::DBError(error));
+pub fn validate_login(optional_user: Option<&User>, raw_password: &str) -> LoginResult {
+    if optional_user.is_none() {
+        return LoginResult::Failed(LoginError::UsernameDoesNotExist);
     }
 
-    let option_user = user_result.ok().unwrap();
+    let user = optional_user.unwrap();
 
-    if option_user.is_none() {
-        return Err(LoginError::UsernameDoesNotExist);
+    if !validate_password(raw_password, user.password.as_str()) {
+        return LoginResult::Failed(LoginError::WrongPassword);
     }
 
-    let user = option_user.unwrap();
-
-    if !validate_password(login_data.password.as_str(), user.password.as_str()) {
-        return Err(LoginError::WrongPassword);
-    }
-
-    Ok(user)
+    LoginResult::Successful
 }
 
 fn validate_password(raw_password: &str, hashed_password: &str) -> bool {
