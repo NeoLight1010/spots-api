@@ -1,5 +1,5 @@
 use crate::{
-    auth::login::{validate_login, LoginError, LoginResult},
+    auth::login::{validate_login, LoginError},
     db::{
         connection::DBConn,
         models::user::{NewUserEncrypted, NewUserNotEncrypted, User},
@@ -73,16 +73,16 @@ pub fn login(
 
     let optional_user = user_result.ok().unwrap();
 
-    let login_result = validate_login(optional_user.as_ref(), &login_data.password);
+    let login_result = validate_login(optional_user, &login_data.password);
 
-    if let LoginResult::Failed(error) = login_result {
+    if let Err(error) = login_result {
         return match error {
             LoginError::UsernameDoesNotExist => Err("Username does not exist.".into()),
             LoginError::WrongPassword => Err("Incorrect password.".into()),
         };
     }
 
-    let user = optional_user.unwrap();
+    let user = login_result.ok().unwrap();
 
     let user_id_cookie = Cookie::new("user_id", user.id.to_string());
 

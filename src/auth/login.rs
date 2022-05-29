@@ -1,27 +1,22 @@
 use crate::db::models::user::User;
 
-pub enum LoginResult {
-    Successful,
-    Failed(LoginError),
-}
-
 pub enum LoginError {
     UsernameDoesNotExist,
     WrongPassword,
 }
 
-pub fn validate_login(optional_user: Option<&User>, raw_password: &str) -> LoginResult {
+pub fn validate_login(optional_user: Option<User>, raw_password: &str) -> Result<User, LoginError> {
     if optional_user.is_none() {
-        return LoginResult::Failed(LoginError::UsernameDoesNotExist);
+        return Err(LoginError::UsernameDoesNotExist);
     }
 
     let user = optional_user.unwrap();
 
     if !validate_password(raw_password, user.password.as_str()) {
-        return LoginResult::Failed(LoginError::WrongPassword);
+        return Err(LoginError::WrongPassword);
     }
 
-    LoginResult::Successful
+    Ok(user)
 }
 
 fn validate_password(raw_password: &str, hashed_password: &str) -> bool {
