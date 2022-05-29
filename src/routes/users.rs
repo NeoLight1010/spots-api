@@ -8,10 +8,13 @@ use diesel::{prelude::*, result::DatabaseErrorKind::UniqueViolation};
 use rocket::serde::json::Json;
 
 #[get("/")]
-pub fn get_users(conn: DBConn) -> Json<Vec<User>> {
-    let all_users: Vec<User> = users.get_results(&*conn).expect("Error loading users");
+pub fn get_users(conn: DBConn) -> Result<Json<Vec<User>>, String> {
+    let all_users_result: Result<Vec<User>, _> = users.get_results(&*conn);
 
-    Json(all_users)
+    match all_users_result {
+        Ok(all_users) => Ok(Json(all_users)),
+        Err(error) => Err(error.to_string()),
+    }
 }
 
 #[post("/register", format = "json", data = "<new_user_not_encrypted_json>")]
