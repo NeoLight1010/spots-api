@@ -25,7 +25,7 @@ fn validate_password(raw_password: &str, hashed_password: &str) -> bool {
 
 #[cfg(test)]
 mod test {
-    use crate::db::models::user::User;
+    use crate::{db::models::user::User, auth::utils::encrypt_password};
 
     use super::{validate_login, LoginError};
 
@@ -62,15 +62,16 @@ mod test {
 
     #[test]
     fn validate_login_successful() {
-        let correct_password = "my-test-password";
+        let correct_password_raw = "my-test-password";
+        let correct_password_encrypted = encrypt_password(correct_password_raw);
 
         let user = User {
             id: 1,
             username: "test".into(),
-            password: correct_password.into(),
+            password: correct_password_encrypted,
         };
 
-        let result = validate_login(Some(user), correct_password);
+        let result = validate_login(Some(user), correct_password_raw);
 
         result.ok().unwrap();
     }
