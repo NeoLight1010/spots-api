@@ -19,7 +19,7 @@ pub fn rocket() -> _ {
         .manage(init_db_pool())
         .mount("/", routes![index])
         .mount("/spot", routes![spot::index, spot::create_spot])
-        .mount("/users", routes![users::get_users])
+        .mount("/users", routes![users::get_users, users::register_user])
 }
 
 #[cfg(test)]
