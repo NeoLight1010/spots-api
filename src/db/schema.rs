@@ -1,4 +1,12 @@
 table! {
+    groups (id) {
+        id -> Int4,
+        name -> Varchar,
+        description -> Varchar,
+    }
+}
+
+table! {
     spots (id) {
         id -> Int4,
         title -> Varchar,
@@ -17,6 +25,7 @@ table! {
 }
 
 allow_tables_to_appear_in_same_query!(
+    groups,
     spots,
     users,
 );
