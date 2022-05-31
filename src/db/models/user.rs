@@ -3,7 +3,7 @@ use crate::{db::schema::users, auth::utils::encrypt_password};
 use diesel::Queryable;
 use serde::{Deserialize, Serialize};
 
-#[derive(Queryable, Serialize)]
+#[derive(Identifiable, Queryable, Serialize)]
 pub struct User {
     pub id: i32,
 
