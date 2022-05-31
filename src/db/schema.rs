@@ -1,4 +1,11 @@
 table! {
+    group_users (group_id, user_id) {
+        group_id -> Int4,
+        user_id -> Int4,
+    }
+}
+
+table! {
     groups (id) {
         id -> Int4,
         name -> Varchar,
@@ -24,7 +31,11 @@ table! {
     }
 }
 
+joinable!(group_users -> groups (group_id));
+joinable!(group_users -> users (user_id));
+
 allow_tables_to_appear_in_same_query!(
+    group_users,
     groups,
     spots,
     users,
