@@ -1,3 +1,6 @@
+use crate::db::schema::groups;
+
+#[derive(Queryable, Identifiable)]
 pub struct Group {
     pub id: i32,
 
