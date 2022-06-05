@@ -13,10 +13,8 @@ use crate::db::{
 
 use diesel::prelude::*;
 
-pub struct AuthenticatedUser(User);
-
 #[rocket::async_trait]
-impl<'a> FromRequest<'a> for AuthenticatedUser {
+impl<'a> FromRequest<'a> for User {
     type Error = ();
 
     async fn from_request(request: &'a Request<'_>) -> Outcome<Self, Self::Error> {
@@ -39,7 +37,7 @@ impl<'a> FromRequest<'a> for AuthenticatedUser {
         let user: Result<User, _> = users::table.find(user_id).first(&*db);
 
         match user {
-            Ok(user) => Outcome::Success(AuthenticatedUser(user)),
+            Ok(user) => Outcome::Success(user),
             _ => Outcome::Failure((Status::Unauthorized, ()))
         }
     }
