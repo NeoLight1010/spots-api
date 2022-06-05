@@ -95,3 +95,8 @@ pub fn login(
 pub fn me(user: User) -> Json<User> {
     Json(user)
 }
+
+#[get("/logout")]
+pub fn logout(jar: &CookieJar<'_>) {
+    jar.remove(Cookie::named("user_id"));
+}

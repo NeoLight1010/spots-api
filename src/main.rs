@@ -26,7 +26,8 @@ pub fn rocket() -> _ {
                 users::get_users,
                 users::register_user,
                 users::login,
-                users::me
+                users::logout,
+                users::me,
             ],
         )
 }
