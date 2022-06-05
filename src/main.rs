@@ -22,7 +22,12 @@ pub fn rocket() -> _ {
         .mount("/spot", routes![spot::index, spot::create_spot])
         .mount(
             "/users",
-            routes![users::get_users, users::register_user, users::login],
+            routes![
+                users::get_users,
+                users::register_user,
+                users::login,
+                users::me
+            ],
         )
 }
 

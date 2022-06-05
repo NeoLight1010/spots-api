@@ -90,3 +90,8 @@ pub fn login(
 
     Ok(Json(user))
 }
+
+#[get("/me")]
+pub fn me(user: User) -> Json<User> {
+    Json(user)
+}
