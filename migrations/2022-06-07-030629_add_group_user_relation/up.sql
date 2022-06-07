@@ -1,0 +1,6 @@
+ALTER TABLE
+  spots
+ADD
+  COLUMN group_id INT UNIQUE NOT NULL,
+ADD
+  CONSTRAINT fk_group FOREIGN KEY (group_id) REFERENCES groups (id) ON DELETE CASCADE;

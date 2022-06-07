@@ -20,6 +20,7 @@ table! {
         description -> Varchar,
         latitude -> Float8,
         longitude -> Float8,
+        group_id -> Int4,
     }
 }
 
@@ -31,7 +32,6 @@ table! {
     }
 }
 
-joinable!(group_users -> groups (group_id));
 joinable!(group_users -> users (user_id));
 
 allow_tables_to_appear_in_same_query!(
