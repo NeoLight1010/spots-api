@@ -10,6 +10,7 @@ table! {
         id -> Int4,
         name -> Varchar,
         description -> Varchar,
+        owner_id -> Int4,
     }
 }
 
@@ -31,8 +32,6 @@ table! {
         password -> Varchar,
     }
 }
-
-joinable!(group_users -> users (user_id));
 
 allow_tables_to_appear_in_same_query!(
     group_users,

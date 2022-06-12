@@ -1,0 +1,6 @@
+ALTER TABLE groups
+
+ADD
+  COLUMN owner_id INT NOT NULL,
+ADD
+  CONSTRAINT fk_group FOREIGN KEY (owner_id) REFERENCES users (id) ON DELETE CASCADE;
