@@ -8,8 +8,12 @@ use crate::{
 };
 use diesel::result::Error;
 use diesel::{prelude::*, result::DatabaseErrorKind::UniqueViolation};
-use rocket::{http::{CookieJar, Cookie}, serde::json::Json};
+use rocket::{http::{CookieJar, Cookie}, serde::json::Json, Route};
 use serde::Deserialize;
+
+pub fn routes() -> Vec<Route> {
+    routes![get_users, register_user, login, me, logout]
+}
 
 #[derive(Deserialize)]
 pub struct LoginData {

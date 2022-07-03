@@ -5,7 +5,11 @@ use crate::db::{
 };
 
 use diesel::prelude::*;
-use rocket::serde::json::Json;
+use rocket::{serde::json::Json, Route};
+
+pub fn routes() -> Vec<Route> {
+    routes![index, create_spot]
+}
 
 #[get("/")]
 pub fn index(conn: DBConn) -> Json<Vec<Spot>> {

@@ -1,7 +1,11 @@
 use crate::db::connection::DBConn;
 use crate::db::{models::group::Group, schema::groups};
 use diesel::prelude::*;
-use rocket::serde::json::Json;
+use rocket::{serde::json::Json, Route};
+
+pub fn routes() -> Vec<Route> {
+    routes![list_groups]
+}
 
 #[get("/")]
 pub fn list_groups(conn: DBConn) -> Json<Vec<Group>> {
