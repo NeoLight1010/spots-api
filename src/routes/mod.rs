@@ -1,3 +1,4 @@
+pub mod groups;
 pub mod spot;
 pub mod users;
 

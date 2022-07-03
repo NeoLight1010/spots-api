@@ -1,6 +1,8 @@
+use serde::Serialize;
+
 use crate::db::{models::user::User, schema::groups};
 
-#[derive(Queryable, Identifiable, Associations)]
+#[derive(Queryable, Identifiable, Associations, Serialize)]
 #[belongs_to(User, foreign_key="owner_id")]
 pub struct Group {
     pub id: i32,
