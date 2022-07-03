@@ -23,14 +23,3 @@ pub fn rocket() -> _ {
         .mount("/users", users::routes())
         .mount("/groups", groups::routes())
 }
-
-#[cfg(test)]
-mod test {
-    use super::rocket;
-    use rocket::local::blocking::Client;
-
-    #[test]
-    fn rocket_instance() {
-        Client::tracked(rocket()).expect("Invalid rocket instance.");
-    }
-}
