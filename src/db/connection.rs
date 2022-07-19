@@ -2,16 +2,15 @@ use std::ops::Deref;
 
 use diesel::{
     r2d2::{ConnectionManager, PooledConnection},
-    PgConnection, Connection,
+    PgConnection,
 };
-use dotenv::dotenv;
 use rocket::{
     http::Status,
     request::{FromRequest, Outcome},
     Request,
 };
 
-use super::setup::{DBPool, get_database_url};
+use super::setup::DBPool;
 
 pub struct DBConn(PooledConnection<ConnectionManager<PgConnection>>);
 
