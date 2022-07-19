@@ -36,16 +36,3 @@ impl Deref for DBConn {
         &self.0
     }
 }
-
-/// Creates a db connection and runs the given closure inside a transaction.
-#[allow(dead_code)]
-pub fn run_test_transaction<F, R>(func: F) -> R
-where F: FnOnce(PgConnection) -> R {
-    dotenv().ok();
-
-    let conn = PgConnection::establish(&get_database_url()) .expect("Error loading DB.");
-
-    conn.begin_test_transaction().unwrap();
-
-    func(conn)
-}
